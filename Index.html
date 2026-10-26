@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wawan Raymonz — Personal Web & Portfolio Platform</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            dark: '#09090b',
+                            card: 'rgba(20, 20, 23, 0.85)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+        }
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ca8a04;
+        }
+        .glass-card {
+            background: rgba(18, 18, 21, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(234, 179, 8, 0.22);
+        }
+        .glass-card:hover {
+            border-color: rgba(234, 179, 8, 0.45);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .text-glow {
+            text-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+        }
+        .border-glow {
+            box-shadow: 0 0 15px -3px rgba(234, 179, 8, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen relative selection:bg-yellow-400 selection:text-zinc-950 flex flex-col">
+
+    <!-- Background Dynamic Layer -->
+    <div id="bgWrapper" class="fixed inset-0 z-0 pointer-events-none transition-all duration-300">
+        <div id="bgImage" class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500" style="background-image: url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=2000');"></div>
+        <div id="bgOverlay" class="absolute inset-0 bg-zinc-950 transition-opacity duration-300" style="opacity: 0.90;"></div>
+    </div>
+
+    <!-- Main App Wrapper -->
+    <div class="relative z-10 flex min-h-screen flex-col md:flex-row">
+
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-64 glass-card border-r border-yellow-500/20 hidden md:flex flex-col justify-between sticky top-0 h-screen shrink-0 z-30">
+            <div>
+                <!-- Brand / Logo -->
+                <div class="p-5 border-b border-yellow-500/20 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center text-zinc-950 font-black text-xl shadow-lg shadow-yellow-500/20 tracking-wider">
+                        WR
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base tracking-wide text-white leading-tight">Wawan Raymonz</h1>
+                        <p class="text-[11px] text-yellow-400 font-semibold tracking-wider uppercase">Anak Motret Platform</p>
+                    </div>
+                </div>
+
+                <!-- Nav Links -->
+                <nav class="p-3 space-y-1.5">
+                    <button onclick="switchTab('feed')" id="nav-feed" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-200 bg-yellow-400 text-zinc-950 shadow-md shadow-yellow-500/20">
+                        <i class="fa-solid fa-compass w-5 text-center text-base"></i>
+                        <span>Jelajah Feed</span>
+                    </button>
+                    <button onclick="switchTab('manage')" id="nav-manage" class="owner-only w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                        <i class="fa-solid fa-pen-to-square w-5 text-center text-base"></i>
+                        <span>Kelola Artikel</span>
+                    </button>
+                    <button onclick="switchTab('categories')" id="nav-categories" class="owner-only w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                        <i class="fa-solid fa-tags w-5 text-center text-base"></i>
+                        <span>Kelola Kategori</span>
+                    </button>
+                    <button onclick="switchTab('settings')" id="nav-settings" class="owner-only w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-200 text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                        <i class="fa-solid fa-gear w-5 text-center text-base"></i>
+                        <span>Pengaturan Web</span>
+                    </button>
+                    <button onclick="openInquiryModal()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-200 text-yellow-400 hover:bg-yellow-400/10 border border-yellow-500/30">
+                        <i class="fa-solid fa-paper-plane w-5 text-center text-base"></i>
+                        <span>Inquiry / Booking</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Sidebar User Foot & Mode Switcher -->
+            <div class="p-3 border-t border-yellow-500/20 space-y-2.5">
+                <div class="bg-zinc-900/90 p-2.5 rounded-xl border border-yellow-500/20 space-y-2">
+                    <div class="flex items-center justify-between text-[10px] font-semibold text-zinc-300">
+                        <span>Mode Tampilan:</span>
+                        <span id="roleBadge" class="px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-400 border border-yellow-500/30">Pemilik (Edit)</span>
+                    </div>
+                    <button onclick="toggleUserRole()" id="roleToggleBtn" class="w-full py-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white text-[11px] font-semibold border border-yellow-500/20 flex items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-eye"></i> Simulasi Pengunjung
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3 bg-zinc-900/80 p-2.5 rounded-xl border border-yellow-500/10">
+                    <img id="sidebarAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-yellow-400">
+                    <div class="overflow-hidden">
+                        <p id="sidebarName" class="text-xs font-bold text-white truncate">Wawan Raymonz</p>
+                        <p id="storageStatus" class="text-[9px] text-yellow-400 truncate"><i class="fa-solid fa-database"></i> IndexedDB Ready</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Header Bar -->
+        <div class="md:hidden fixed top-0 left-0 right-0 z-40 glass-card border-b border-yellow-500/20 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center text-zinc-950 font-black text-sm shadow-md shadow-yellow-500/20">WR</div>
+                <span class="font-bold text-white text-sm">Wawan Raymonz</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <button onclick="switchTab('feed')" class="p-2 text-yellow-400" title="Feed"><i class="fa-solid fa-compass text-base"></i></button>
+                <button onclick="switchTab('manage')" class="p-2 text-zinc-400 owner-only" title="Kelola Artikel"><i class="fa-solid fa-pen-to-square text-base"></i></button>
+                <button onclick="switchTab('categories')" class="p-2 text-zinc-400 owner-only" title="Kelola Kategori"><i class="fa-solid fa-tags text-base"></i></button>
+                <button onclick="switchTab('settings')" class="p-2 text-zinc-400 owner-only" title="Pengaturan"><i class="fa-solid fa-gear text-base"></i></button>
+                <button onclick="openInquiryModal()" class="p-2 text-yellow-400" title="Hubungi Kami"><i class="fa-solid fa-paper-plane text-base"></i></button>
+                <button onclick="toggleUserRole()" class="p-2 text-yellow-400" title="Ganti Mode"><i class="fa-solid fa-user-gear text-base"></i></button>
+            </div>
+        </div>
+
+        <!-- Main Content Viewport -->
+        <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto pt-20 md:pt-8 mb-16 md:mb-0 w-full overflow-x-hidden">
+
+            <!-- TAB 1: FEED & USER PROFILE -->
+            <div id="tab-feed" class="space-y-8">
+                
+                <!-- Profile Header Banner -->
+                <div class="glass-card rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-2xl border-glow">
+                    <div class="absolute top-0 right-0 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
+                        <div class="relative group shrink-0">
+                            <img id="profileAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400" alt="Profile Avatar" class="w-32 h-32 md:w-36 md:h-36 rounded-2xl object-cover border-2 border-yellow-400 shadow-xl shadow-yellow-500/20">
+                            <label for="avatarInput" class="owner-only absolute inset-0 bg-black/75 rounded-2xl flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-yellow-400 text-xs font-semibold gap-1">
+                                <i class="fa-solid fa-camera text-xl"></i>
+                                <span>Ganti Foto</span>
+                            </label>
+                            <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                        </div>
+                        
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h2 id="profileName" class="text-2xl md:text-3xl font-extrabold text-white tracking-tight text-glow">Wawan Raymonz</h2>
+                                    <p id="profileTagline" class="text-yellow-400 font-semibold text-xs md:text-sm mt-1 uppercase tracking-wider">Professional Photographer & Creator — Anak Motret</p>
+                                </div>
+                                <div class="flex flex-wrap items-center justify-center gap-2.5">
+                                    <button onclick="openInquiryModal()" class="px-4 py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 transition-all shadow-lg shadow-yellow-500/20 flex items-center gap-2">
+                                        <i class="fa-solid fa-comments"></i> Hubungi / Order
+                                    </button>
+                                    <button onclick="switchTab('manage'); openArticleModal();" class="owner-only px-4 py-2.5 rounded-xl bg-zinc-800 text-zinc-200 font-semibold text-xs hover:bg-zinc-700 transition-all border border-yellow-500/20 flex items-center gap-2">
+                                        <i class="fa-solid fa-plus"></i> Artikel Baru
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <p id="profileBio" class="text-zinc-300 text-xs md:text-sm mt-4 leading-relaxed max-w-3xl">
+                                Selamat datang di platform web pribadi & portofolio saya! Tempat membagikan foto-foto sinematik, estetika visual retro, liputan kuliner, desain streetwear, serta tutorial & teknologi fotografi.
+                            </p>
+
+                            <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-5 text-xs text-zinc-400">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-yellow-400"></i> Jakarta, Indonesia</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-camera-retro text-yellow-400"></i> Commercial & Portrait</span>
+                                <span id="profileEmailDisplay" class="flex items-center gap-1.5"><i class="fa-solid fa-envelope text-yellow-400"></i> Wanraysadega@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Articles Search & Filter Section -->
+                <div id="articlesSection" class="space-y-4 pt-2">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-newspaper text-yellow-400"></i> Artikel & Portofolio
+                            </h3>
+                            <p class="text-xs text-zinc-400 mt-0.5">Jelajahi karya visual, dokumentasi kuliner, dan artikel berdasarkan kategori.</p>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="relative w-full md:w-72">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-xs"></i>
+                            <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Cari karya atau artikel..." class="w-full bg-zinc-900/90 border border-yellow-500/30 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-yellow-400 transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Category Scroll Bar Filter Pills -->
+                    <div class="overflow-x-auto pb-2 hide-scrollbar">
+                        <div id="categoryFilterContainer" class="flex items-center gap-2 min-w-max"></div>
+                    </div>
+                </div>
+
+                <!-- Articles Feed Grid -->
+                <div id="articlesFeedGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- TAB 2: ARTICLE MANAGEMENT (Owner Only) -->
+            <div id="tab-manage" class="hidden space-y-8">
+                <div class="glass-card rounded-3xl p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-yellow-500/20">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-pen-nib text-yellow-400"></i> Kelola Artikel & Portofolio
+                            </h3>
+                            <p class="text-xs text-zinc-400 mt-1">Daftar publikasi, edit artikel, atau posting karya visual baru.</p>
+                        </div>
+                        <button onclick="openArticleModal()" class="px-4 py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 transition-all shadow-lg shadow-yellow-500/20 flex items-center gap-2 self-start sm:self-auto">
+                            <i class="fa-solid fa-plus-circle"></i> Buat Artikel Baru
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-yellow-500/20 text-xs font-semibold text-yellow-400 uppercase tracking-wider">
+                                    <th class="py-3 px-4">Judul & Media</th>
+                                    <th class="py-3 px-4">Kategori</th>
+                                    <th class="py-3 px-4">Tanggal</th>
+                                    <th class="py-3 px-4 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manageArticleTableBody" class="divide-y divide-zinc-800/80 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: CATEGORIES MANAGEMENT (Owner Only) -->
+            <div id="tab-categories" class="hidden space-y-8">
+                <div class="glass-card rounded-3xl p-6 md:p-8 max-w-4xl mx-auto space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-yellow-500/20">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-tags text-yellow-400"></i> Kelola Kategori Karya
+                            </h3>
+                            <p class="text-xs text-zinc-400 mt-1">Tambah, edit nama, atur urutan tampilan, atau hapus kategori penyaring karya Anda.</p>
+                        </div>
+                        <button onclick="resetCategoriesToDefault()" class="px-3.5 py-2 rounded-xl bg-zinc-800 text-yellow-400 hover:bg-zinc-700 text-xs font-semibold border border-yellow-500/20 transition-all flex items-center gap-2 self-start sm:self-auto">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Kategori
+                        </button>
+                    </div>
+                    
+                    <!-- Form Input Tambah Kategori -->
+                    <form onsubmit="handleAddCategory(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3 p-4 bg-zinc-900/80 rounded-2xl border border-yellow-500/20">
+                        <div class="md:col-span-8">
+                            <label class="block text-xs font-medium text-zinc-300 mb-1">Nama Kategori Baru</label>
+                            <input type="text" id="newCategoryInput" placeholder="Contoh: Streetwear, Commercial Photography..." required class="w-full bg-zinc-950 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                        </div>
+                        <div class="md:col-span-4 flex items-end">
+                            <button type="submit" class="w-full py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 transition-all shadow-md shadow-yellow-500/20 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Tambah Kategori
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Daftar Kategori Aktif -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs font-semibold text-yellow-400 uppercase tracking-wider px-1">
+                            <span>Daftar Kategori (<span id="categoryCount">0</span>)</span>
+                            <span>Aksi & Urutan</span>
+                        </div>
+                        <div class="space-y-2" id="categoryListContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: SETTINGS (Owner Only) -->
+            <div id="tab-settings" class="hidden space-y-8 max-w-4xl mx-auto">
+                <div class="glass-card rounded-3xl p-6 md:p-8 space-y-8">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2 pb-4 border-b border-yellow-500/20">
+                        <i class="fa-solid fa-gear text-yellow-400"></i> Pengaturan Web & Profil
+                    </h3>
+
+                    <!-- Background Appearance Control -->
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-xs text-yellow-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-image"></i> Tampilan Background Latar
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-2">Ganti Foto Latar Belakang Web</label>
+                                <input type="file" accept="image/*" onchange="handleCustomBackground(event)" class="w-full text-xs text-zinc-400 file:mr-4 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-yellow-400 file:text-zinc-950 hover:file:bg-yellow-300 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-2">Opasitas Overlay Gelap (<span id="opacityVal">90</span>%)</label>
+                                <input type="range" id="opacitySlider" min="20" max="98" value="90" oninput="changeOpacity(this.value)" class="w-full accent-yellow-400 cursor-pointer mt-2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-yellow-500/20">
+
+                    <!-- Profile Form -->
+                    <form onsubmit="handleSaveProfile(event)" class="space-y-4">
+                        <h4 class="font-semibold text-xs text-yellow-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-user-pen"></i> Informasi Profil & Kontak
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-1">Nama Lengkap</label>
+                                <input type="text" id="editProfileName" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-1">Tagline / Profesi</label>
+                                <input type="text" id="editProfileTagline" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-1">Email Kontak</label>
+                                <input type="email" id="editProfileEmail" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-300 mb-1">Nomor WhatsApp (Contoh: 628123456789)</label>
+                                <input type="text" id="editProfilePhone" placeholder="628123456789" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-300 mb-1">Bio Profil Ringkas</label>
+                            <textarea id="editProfileBio" rows="4" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 leading-relaxed"></textarea>
+                        </div>
+                        <div class="flex items-center justify-end pt-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 transition-all shadow-md shadow-yellow-500/20 flex items-center gap-2">
+                                <i class="fa-solid fa-check"></i> Simpan Pengaturan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL 1: CREATE / EDIT ARTICLE -->
+    <div id="articleModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card rounded-3xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border border-yellow-500/40 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-yellow-500/20 mb-6">
+                <h3 id="modalTitle" class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-yellow-400"></i> Buat Artikel Baru
+                </h3>
+                <button onclick="closeArticleModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <form id="articleForm" onsubmit="handleSaveArticle(event)" class="space-y-4">
+                <input type="hidden" id="articleId">
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Judul Artikel / Portofolio</label>
+                    <input type="text" id="articleTitle" required placeholder="Contoh: Pemotretan Pre-Wedding Sinematik Jakarta" class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-300 mb-1">Kategori Karya</label>
+                        <select id="articleCategory" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-300 mb-1">Unggah Foto (Multi-File / Kompres Canvas)</label>
+                        <input type="file" id="articleImagesInput" accept="image/*" multiple onchange="handleArticleImages(event)" class="w-full text-xs text-zinc-400 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-400 file:text-zinc-950 cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Atau Tambahkan URL Tautan Gambar Langsung</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="articleUrlInput" placeholder="https://images.unsplash.com/photo-..." class="flex-1 bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-yellow-400">
+                        <button type="button" onclick="addUrlImage()" class="px-4 py-2 rounded-xl bg-zinc-800 text-yellow-400 font-semibold text-xs hover:bg-zinc-700 border border-yellow-500/20">Tambah URL</button>
+                    </div>
+                </div>
+
+                <!-- Preview thumbnail image container -->
+                <div>
+                    <label class="block text-xs font-medium text-zinc-400 mb-2">Daftar Foto Pilihan (<span id="tempImageCount">0</span> foto):</label>
+                    <div id="imagePreviewContainer" class="flex flex-wrap gap-3 p-3 bg-zinc-900/80 rounded-xl border border-yellow-500/20 min-h-[70px]"></div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Deskripsi / Konten Artikel</label>
+                    <textarea id="articleContent" rows="6" required placeholder="Tuliskan narasi, detail peralatan kamera, setting pencahayaan, atau konsep visual..." class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 leading-relaxed"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-yellow-500/20">
+                    <button type="button" onclick="closeArticleModal()" class="px-5 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-xs hover:bg-zinc-700">Batal</button>
+                    <button type="submit" id="saveArticleBtn" class="px-6 py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 shadow-lg shadow-yellow-500/20 flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i> Simpan Artikel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EDIT CATEGORY NAME -->
+    <div id="editCategoryModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 max-w-md w-full relative border border-yellow-500/40 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-yellow-500/20">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-yellow-400"></i> Edit Nama Kategori
+                </h3>
+                <button onclick="closeEditCategoryModal()" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleSaveEditCategory(event)" class="space-y-4">
+                <input type="hidden" id="editCategoryIndex">
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Nama Kategori Baru</label>
+                    <input type="text" id="editCategoryInput" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-yellow-400">
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditCategoryModal()" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 font-semibold text-xs">Batal</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 shadow-md">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: READ FULL ARTICLE DETAIL -->
+    <div id="detailArticleModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card rounded-3xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative border border-yellow-500/40 shadow-2xl space-y-6">
+            <div class="flex items-center justify-between pb-4 border-b border-yellow-500/20 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-20 -mx-6 -mt-6 px-6 pt-6">
+                <div>
+                    <span id="detailCategory" class="px-3 py-1 rounded-full bg-yellow-400/10 text-yellow-400 text-xs font-semibold border border-yellow-500/30"></span>
+                    <p id="detailDate" class="text-xs text-zinc-400 mt-1 flex items-center gap-1.5"><i class="fa-regular fa-calendar text-yellow-400"></i> <span id="detailDateText"></span></p>
+                </div>
+                <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <h2 id="detailTitle" class="text-2xl md:text-3xl font-extrabold text-white leading-snug"></h2>
+
+            <!-- Main Big Image View -->
+            <div class="relative overflow-hidden rounded-2xl aspect-video border border-yellow-500/30 bg-zinc-900 cursor-pointer group" onclick="openLightbox(document.getElementById('detailMainImg').src)">
+                <img id="detailMainImg" src="" alt="Detail Cover" class="w-full h-full object-cover">
+                <div class="absolute bottom-3 right-3 bg-black/80 text-yellow-400 text-xs px-3 py-1.5 rounded-xl backdrop-blur-sm border border-yellow-500/30 flex items-center gap-1.5 opacity-90 group-hover:opacity-100">
+                    <i class="fa-solid fa-expand"></i> Klik Perbesar Fullscreen
+                </div>
+            </div>
+
+            <!-- Multi Image Gallery Thumbnails -->
+            <div id="detailGalleryContainer" class="flex gap-3 overflow-x-auto pb-2"></div>
+
+            <!-- Text Content -->
+            <div class="pt-4 border-t border-yellow-500/20">
+                <h4 class="text-xs font-bold text-yellow-400 mb-2 uppercase tracking-wide">Ulasan / Cerita Karya</h4>
+                <p id="detailContent" class="text-zinc-300 text-xs md:text-sm leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-yellow-500/20">
+                <button onclick="closeDetailModal()" class="px-6 py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 transition-all">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CLIENT INQUIRY / BOOKING FORM -->
+    <div id="inquiryModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card rounded-3xl p-6 md:p-8 max-w-lg w-full relative border border-yellow-500/40 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between pb-4 border-b border-yellow-500/20">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-yellow-400"></i> Inquiry & Booking Fotografi
+                    </h3>
+                    <p class="text-xs text-zinc-400 mt-0.5">Kirimkan pesan atau tawaran kolaborasi ke Wawan Raymonz.</p>
+                </div>
+                <button onclick="closeInquiryModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSendInquiry(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Nama Anda / Perusahaan</label>
+                    <input type="text" id="inquiryName" required placeholder="Contoh: Alex Studio" class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Jenis Layanan</label>
+                    <select id="inquiryService" required class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400">
+                        <option value="Commercial Photography">Commercial & Brand Photography</option>
+                        <option value="Pre-Wedding & Event">Pre-Wedding / Event Documentation</option>
+                        <option value="Culinary & Food Shoot">Culinary & Food Photography</option>
+                        <option value="Streetwear Apparel Shoot">Streetwear & Apparel Campaign</option>
+                        <option value="Lainnya">Lainnya / Kolaborasi Custom</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-zinc-300 mb-1">Detail Pesan / Konsep Project</label>
+                    <textarea id="inquiryMessage" rows="4" required placeholder="Jelaskan jadwal, lokasi, atau konsep foto yang Anda butuhkan..." class="w-full bg-zinc-900 border border-yellow-500/30 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-400 leading-relaxed"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button type="submit" onclick="setInquiryTarget('wa')" class="py-2.5 rounded-xl bg-emerald-500 text-zinc-950 font-bold text-xs hover:bg-emerald-400 flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Kirim WhatsApp
+                    </button>
+                    <button type="submit" onclick="setInquiryTarget('email')" class="py-2.5 rounded-xl bg-yellow-400 text-zinc-950 font-bold text-xs hover:bg-yellow-300 flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-envelope text-sm"></i> Kirim Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: CINEMATIC LIGHTBOX FULLSCREEN -->
+    <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-4" onclick="closeLightbox()">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 w-11 h-11 rounded-full bg-zinc-800/80 text-white text-lg flex items-center justify-center hover:bg-yellow-400 hover:text-zinc-950 transition-all z-50">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="max-w-5xl max-h-[90vh] flex items-center justify-center relative" onclick="event.stopPropagation()">
+            <img id="lightboxImg" src="" alt="Lightbox Zoom" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-yellow-500/30">
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <!-- JS ENGINE SCRIPT -->
+    <script>
+        /* -------------------------------------------------------------
+           1. INDEXEDDB ENGINE & PERSISTENT STORAGE
+        ------------------------------------------------------------- */
+        const DB_NAME = 'WawanRaymonzDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'appData';
+        let db = null;
+        let isOwnerMode = true;
+        let inquiryTarget = 'wa'; // 'wa' or 'email'
+
+        function initDB() {
+            return new Promise((resolve) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains(STORE_NAME)) {
+                        database.createObjectStore(STORE_NAME);
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    const statusEl = document.getElementById('storageStatus');
+                    if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-database"></i> IndexedDB Active`;
+                    resolve(db);
+                };
+                request.onerror = () => {
+                    resolve(null);
+                };
+            });
+        }
+
+        function setDBItem(key, value) {
+            return new Promise((resolve) => {
+                if (!db) {
+                    try {
+                        localStorage.setItem('wr_' + key, JSON.stringify(value));
+                    } catch (e) {
+                        showToast('Local Storage penuh!', 'error');
+                    }
+                    resolve();
+                    return;
+                }
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.put(value, key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => {
+                    try {
+                        localStorage.setItem('wr_' + key, JSON.stringify(value));
+                    } catch (e) {}
+                    resolve();
+                };
+            });
+        }
+
+        function getDBItem(key) {
+            return new Promise((resolve) => {
+                if (!db) {
+                    const val = localStorage.getItem('wr_' + key);
+                    resolve(val ? JSON.parse(val) : null);
+                    return;
+                }
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get(key);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => {
+                    const val = localStorage.getItem('wr_' + key);
+                    resolve(val ? JSON.parse(val) : null);
+                };
+            });
+        }
+
+        /* -------------------------------------------------------------
+           2. DEFAULT INITIAL DATA SETTINGS
+        ------------------------------------------------------------- */
+        const DEFAULT_PROFILE = {
+            name: "Wawan Raymonz",
+            tagline: "Professional Photographer & Creator — Anak Motret",
+            bio: "Selamat datang di platform web pribadi saya! Ruang digital khusus untuk membagikan portofolio fotografi sinematik, estetika retro, liputan kuliner, desain streetwear, serta artikel kreatif terkini di bawah naungan Anak Motret.",
+            email: "Wanraysadega@gmail.com",
+            phone: "628123456789",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",
+            bgImage: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=2000",
+            bgOpacity: 90
+        };
+
+        const DEFAULT_CATEGORIES = [
+            "Fotografi",
+            "Commercial & Brand",
+            "Portrait & Fashion",
+            "Wedding & Pre-Wedding",
+            "Street & Landscape",
+            "Kuliner & Food Photography",
+            "Streetwear & Apparel Design",
+            "Web Dev & Tech"
+        ];
+
+        const DEFAULT_ARTICLES = [
+            {
+                id: "art-1",
+                title: "Sesi Pemotretan Pre-Wedding Sinematik Jakarta",
+                category: "Wedding & Pre-Wedding",
+                date: "24 Okt 2026",
+                images: [
+                    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800"
+                ],
+                content: "Eksplorasi visual dengan nuansa pencahayaan kontras tinggi dan estetika sinematik urban di jantung Kota Jakarta bersama tim Anak Motret."
+            },
+            {
+                id: "art-2",
+                title: "Eksplorasi Food Photography: Sushi Roll Warm Lighting",
+                category: "Kuliner & Food Photography",
+                date: "20 Okt 2026",
+                images: [
+                    "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=800",
+                    "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800"
+                ],
+                content: "Dokumentasi fotografi makanan dan suasana hidangan kuliner Jepang. Fokus pada kerapian tekstur, efek obor mentai, serta ambience studio yang hangat."
+            },
+            {
+                id: "art-3",
+                title: "Konsep Desain Graphic Tee Boxy Fit & Zipper Hoodie 2026",
+                category: "Streetwear & Apparel Design",
+                date: "15 Okt 2026",
+                images: [
+                    "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=800"
+                ],
+                content: "Eksperimen desain busana streetwear lokal berpotongan boxy fit dengan sablon tipografi bold retro dan aksen zipper metalik antik."
+            }
+        ];
+
+        let profile = { ...DEFAULT_PROFILE };
+        let categories = [...DEFAULT_CATEGORIES];
+        let articles = [...DEFAULT_ARTICLES];
+        let currentFilter = 'All';
+        let searchQuery = '';
+        let tempArticleImages = [];
+
+        /* -------------------------------------------------------------
+           3. APP LIFECYCLE INITIALIZATION
+        ------------------------------------------------------------- */
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+
+            const savedProfile = await getDBItem('profile');
+            const savedCategories = await getDBItem('categories');
+            const savedArticles = await getDBItem('articles');
+
+            if (savedProfile) profile = { ...DEFAULT_PROFILE, ...savedProfile };
+            if (savedCategories && Array.isArray(savedCategories) && savedCategories.length > 0) {
+                categories = savedCategories;
+            } else {
+                await setDBItem('categories', categories);
+            }
+            if (savedArticles) articles = savedArticles;
+
+            renderProfile();
+            renderCategories();
+            renderArticles();
+            renderManageTable();
+            applyBackgroundSettings();
+            updateRoleUI();
+        });
+
+        /* -------------------------------------------------------------
+           4. ROLE SWITCHER & NAVIGATION UTILS
+        ------------------------------------------------------------- */
+        function toggleUserRole() {
+            isOwnerMode = !isOwnerMode;
+            updateRoleUI();
+            showToast(`Mode diubah ke: ${isOwnerMode ? 'Pemilik (Full Access)' : 'Pengunjung (Read-Only)'}`);
+        }
+
+        function updateRoleUI() {
+            const badge = document.getElementById('roleBadge');
+            const ownerElements = document.querySelectorAll('.owner-only');
+
+            if (isOwnerMode) {
+                badge.className = "px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-400 border border-yellow-500/30";
+                badge.innerText = "Pemilik (Edit)";
+                ownerElements.forEach(el => el.style.display = '');
+            } else {
+                badge.className = "px-2 py-0.5 rounded bg-blue-400/20 text-blue-400 border border-blue-500/30";
+                badge.innerText = "Pengunjung";
+                ownerElements.forEach(el => el.style.display = 'none');
+                
+                const activeTab = ['manage', 'categories', 'settings'].find(t => !document.getElementById(`tab-${t}`).classList.contains('hidden'));
+                if (activeTab) switchTab('feed');
+            }
+            renderArticles();
+            renderManageTable();
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const isError = type === 'error';
+            toast.className = `px-4 py-3 rounded-xl border ${isError ? 'bg-red-950/90 border-red-500 text-red-200' : 'bg-zinc-900/90 border-yellow-500/50 text-yellow-300'} backdrop-blur-md shadow-2xl text-xs font-semibold flex items-center gap-2 transition-all duration-300 transform translate-y-4 opacity-0 z-50`;
+            toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Image Compressor Engine (HTML5 Canvas to JPEG DataURL)
+        function compressImage(file, maxWidth = 900, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    }
+                }
+            });
+        }
+
+        function switchTab(tabId) {
+            if (!isOwnerMode && (tabId === 'manage' || tabId === 'categories' || tabId === 'settings')) {
+                showToast('Halaman ini khusus untuk mode Pemilik.', 'error');
+                return;
+            }
+
+            const tabs = ['feed', 'manage', 'categories', 'settings'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if (el) el.classList.add('hidden');
+                if (nav) {
+                    nav.classList.remove('bg-yellow-400', 'text-zinc-950', 'shadow-md', 'shadow-yellow-500/20');
+                    nav.classList.add('text-zinc-400', 'hover:text-white', 'hover:bg-zinc-800/50');
+                }
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-zinc-400', 'hover:text-white', 'hover:bg-zinc-800/50');
+                activeNav.classList.add('bg-yellow-400', 'text-zinc-950', 'shadow-md', 'shadow-yellow-500/20');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* -------------------------------------------------------------
+           5. PROFILE & BACKGROUND MANAGEMENT
+        ------------------------------------------------------------- */
+        function renderProfile() {
+            document.getElementById('profileName').innerText = profile.name;
+            document.getElementById('profileTagline').innerText = profile.tagline;
+            document.getElementById('profileBio').innerText = profile.bio;
+            document.getElementById('profileAvatar').src = profile.avatar;
+            document.getElementById('sidebarAvatar').src = profile.avatar;
+            document.getElementById('sidebarName').innerText = profile.name;
+            document.getElementById('profileEmailDisplay').innerHTML = `<i class="fa-solid fa-envelope text-yellow-400"></i> ${profile.email}`;
+
+            document.getElementById('editProfileName').value = profile.name;
+            document.getElementById('editProfileTagline').value = profile.tagline;
+            document.getElementById('editProfileEmail').value = profile.email;
+            document.getElementById('editProfilePhone').value = profile.phone || '628123456789';
+            document.getElementById('editProfileBio').value = profile.bio;
+            document.getElementById('opacitySlider').value = profile.bgOpacity;
+            document.getElementById('opacityVal').innerText = profile.bgOpacity;
+        }
+
+        function applyBackgroundSettings() {
+            document.getElementById('bgImage').style.backgroundImage = `url('${profile.bgImage}')`;
+            document.getElementById('bgOverlay').style.opacity = profile.bgOpacity / 100;
+        }
+
+        async function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                profile.avatar = await compressImage(file, 400, 0.7);
+                await setDBItem('profile', profile);
+                renderProfile();
+                showToast('Foto profil diperbarui!');
+            }
+        }
+
+        async function handleCustomBackground(event) {
+            const file = event.target.files[0];
+            if (file) {
+                profile.bgImage = await compressImage(file, 1400, 0.7);
+                await setDBItem('profile', profile);
+                applyBackgroundSettings();
+                showToast('Latar belakang web diperbarui!');
+            }
+        }
+
+        async function changeOpacity(val) {
+            profile.bgOpacity = val;
+            document.getElementById('opacityVal').innerText = val;
+            await setDBItem('profile', profile);
+            applyBackgroundSettings();
+        }
+
+        async function handleSaveProfile(event) {
+            event.preventDefault();
+            profile.name = document.getElementById('editProfileName').value;
+            profile.tagline = document.getElementById('editProfileTagline').value;
+            profile.email = document.getElementById('editProfileEmail').value;
+            profile.phone = document.getElementById('editProfilePhone').value;
+            profile.bio = document.getElementById('editProfileBio').value;
+
+            await setDBItem('profile', profile);
+            renderProfile();
+            showToast('Informasi profil disimpan!');
+        }
+
+        /* -------------------------------------------------------------
+           6. CATEGORY MANAGEMENT (CRUD & REORDERING)
+        ------------------------------------------------------------- */
+        function renderCategories() {
+            // Render Feed Category Filter Pills
+            const filterContainer = document.getElementById('categoryFilterContainer');
+            let filterHtml = `
+                <button onclick="filterCategory('All')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${currentFilter === 'All' ? 'bg-yellow-400 text-zinc-950 shadow-md shadow-yellow-500/20 font-bold' : 'bg-zinc-900/90 text-zinc-300 hover:bg-zinc-800 border border-yellow-500/20'}">
+                    <i class="fa-solid fa-layer-group"></i> Semua
+                </button>
+            `;
+            
+            categories.forEach(cat => {
+                const count = articles.filter(a => a.category === cat).length;
+                filterHtml += `
+                    <button onclick="filterCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${currentFilter === cat ? 'bg-yellow-400 text-zinc-950 shadow-md shadow-yellow-500/20 font-bold' : 'bg-zinc-900/90 text-zinc-300 hover:bg-zinc-800 border border-yellow-500/20'}">
+                        <span>${cat}</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] ${currentFilter === cat ? 'bg-zinc-950 text-yellow-400 font-bold' : 'bg-zinc-800 text-zinc-400'}">${count}</span>
+                    </button>
+                `;
+            });
+            filterContainer.innerHTML = filterHtml;
+
+            // Render Select Dropdown in Article Modal
+            const selectEl = document.getElementById('articleCategory');
+            let selectHtml = '';
+            categories.forEach(cat => {
+                selectHtml += `<option value="${cat}">${cat}</option>`;
+            });
+            selectEl.innerHTML = selectHtml;
+
+            // Update Total Category Count
+            document.getElementById('categoryCount').innerText = categories.length;
+
+            // Render Manage Tab Category List
+            const listEl = document.getElementById('categoryListContainer');
+            let listHtml = '';
+            
+            categories.forEach((cat, index) => {
+                const articleCount = articles.filter(a => a.category === cat).length;
+                const isFirst = index === 0;
+                const isLast = index === categories.length - 1;
+
+                listHtml += `
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 border border-yellow-500/20 hover:border-yellow-500/40 transition-all">
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <span class="w-7 h-7 rounded-lg bg-yellow-400/10 text-yellow-400 font-bold text-xs flex items-center justify-center shrink-0 border border-yellow-500/20">${index + 1}</span>
+                            <span class="text-xs font-semibold text-white truncate flex items-center gap-2">
+                                <i class="fa-solid fa-tag text-yellow-400 text-[10px]"></i> ${cat}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-zinc-800 text-[10px] text-zinc-400 border border-yellow-500/10 shrink-0">
+                                ${articleCount} artikel
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button onclick="moveCategory(${index}, -1)" ${isFirst ? 'disabled class="p-1.5 text-zinc-600 cursor-not-allowed"' : 'class="p-1.5 text-zinc-400 hover:text-yellow-400 transition-colors"'} title="Naikkan">
+                                <i class="fa-solid fa-chevron-up text-xs"></i>
+                            </button>
+                            <button onclick="moveCategory(${index}, 1)" ${isLast ? 'disabled class="p-1.5 text-zinc-600 cursor-not-allowed"' : 'class="p-1.5 text-zinc-400 hover:text-yellow-400 transition-colors"'} title="Turunkan">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </button>
+                            <button onclick="openEditCategoryModal(${index})" class="p-1.5 text-zinc-400 hover:text-yellow-400 transition-colors ml-1" title="Edit Nama">
+                                <i class="fa-solid fa-pen-to-square text-xs"></i>
+                            </button>
+                            <button onclick="deleteCategory(${index})" class="p-1.5 text-zinc-500 hover:text-red-400 transition-colors" title="Hapus Kategori">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = listHtml;
+        }
+
+        async function handleAddCategory(event) {
+            event.preventDefault();
+            const input = document.getElementById('newCategoryInput');
+            const val = input.value.trim();
+            if (val) {
+                const exists = categories.some(c => c.toLowerCase() === val.toLowerCase());
+                if (exists) {
+                    showToast('Kategori sudah ada!', 'error');
+                    return;
+                }
+                categories.push(val);
+                await setDBItem('categories', categories);
+                input.value = '';
+                renderCategories();
+                showToast('Kategori baru ditambahkan!');
+            }
+        }
+
+        function openEditCategoryModal(index) {
+            document.getElementById('editCategoryIndex').value = index;
+            document.getElementById('editCategoryInput').value = categories[index];
+            document.getElementById('editCategoryModal').classList.remove('hidden');
+        }
+
+        function closeEditCategoryModal() {
+            document.getElementById('editCategoryModal').classList.add('hidden');
+        }
+
+        async function handleSaveEditCategory(event) {
+            event.preventDefault();
+            const index = parseInt(document.getElementById('editCategoryIndex').value);
+            const newName = document.getElementById('editCategoryInput').value.trim();
+
+            if (newName && index >= 0 && index < categories.length) {
+                const oldName = categories[index];
+                categories[index] = newName;
+
+                let updatedArticles = false;
+                articles.forEach(art => {
+                    if (art.category === oldName) {
+                        art.category = newName;
+                        updatedArticles = true;
+                    }
+                });
+
+                if (currentFilter === oldName) currentFilter = newName;
+
+                await setDBItem('categories', categories);
+                if (updatedArticles) await setDBItem('articles', articles);
+
+                closeEditCategoryModal();
+                renderCategories();
+                renderArticles();
+                renderManageTable();
+                showToast('Nama kategori diperbarui!');
+            }
+        }
+
+        async function deleteCategory(index) {
+            if (categories.length <= 1) {
+                showToast('Minimal harus tersisa 1 kategori!', 'error');
+                return;
+            }
+            const catName = categories[index];
+            const articlesUsingCat = articles.filter(a => a.category === catName).length;
+
+            if (articlesUsingCat > 0) {
+                // Reassign articles to the first remaining category
+                const targetCat = categories[index === 0 ? 1 : 0];
+                articles.forEach(art => {
+                    if (art.category === catName) {
+                        art.category = targetCat;
+                    }
+                });
+                await setDBItem('articles', articles);
+            }
+
+            categories.splice(index, 1);
+            if (currentFilter === catName) currentFilter = 'All';
+
+            await setDBItem('categories', categories);
+            renderCategories();
+            renderArticles();
+            renderManageTable();
+            showToast('Kategori dihapus.');
+        }
+
+        async function moveCategory(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= categories.length) return;
+
+            const temp = categories[index];
+            categories[index] = categories[newIndex];
+            categories[newIndex] = temp;
+
+            await setDBItem('categories', categories);
+            renderCategories();
+            showToast('Urutan kategori diperbarui.');
+        }
+
+        async function resetCategoriesToDefault() {
+            categories = [...DEFAULT_CATEGORIES];
+            await setDBItem('categories', categories);
+            currentFilter = 'All';
+            renderCategories();
+            renderArticles();
+            showToast('Kategori dikembalikan ke bawaan.');
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            renderCategories();
+            renderArticles();
+        }
+
+        /* -------------------------------------------------------------
+           7. ARTICLES & GALLERY ENGINE
+        ------------------------------------------------------------- */
+        function handleSearch(query) {
+            searchQuery = query.toLowerCase().trim();
+            renderArticles();
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('articlesFeedGrid');
+            let filtered = currentFilter === 'All' ? articles : articles.filter(a => a.category === currentFilter);
+
+            if (searchQuery) {
+                filtered = filtered.filter(a => 
+                    a.title.toLowerCase().includes(searchQuery) || 
+                    a.content.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-zinc-500 glass-card rounded-3xl p-8">
+                        <i class="fa-solid fa-folder-open text-4xl mb-3 text-yellow-500/40"></i>
+                        <p class="text-xs font-medium">Tidak ada artikel/portofolio yang cocok.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(art => {
+                const mainImg = art.images?.[0] || 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800';
+                
+                html += `
+                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between group shadow-xl transition-all duration-300">
+                        <div>
+                            <div class="relative overflow-hidden aspect-video cursor-pointer" onclick="openDetailArticle('${art.id}')">
+                                <img src="${mainImg}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-3 left-3 bg-zinc-950/85 backdrop-blur-md text-yellow-400 text-[11px] font-semibold px-3 py-1 rounded-full border border-yellow-500/30 shadow-md">${art.category}</span>
+                            </div>
+                            <div class="p-5">
+                                <p class="text-[11px] text-zinc-400 mb-1 flex items-center gap-1.5"><i class="fa-regular fa-calendar text-yellow-400"></i> ${art.date}</p>
+                                <h4 class="font-bold text-base text-white group-hover:text-yellow-400 transition-colors line-clamp-2 cursor-pointer" onclick="openDetailArticle('${art.id}')">${art.title}</h4>
+                                <p class="text-xs text-zinc-300 mt-2 line-clamp-3 leading-relaxed">${art.content}</p>
+                            </div>
+                        </div>
+                        <div class="px-5 pb-5 pt-2 border-t border-yellow-500/10 flex items-center justify-between">
+                            <button onclick="openDetailArticle('${art.id}')" class="text-xs text-yellow-400 font-bold hover:underline flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open"></i> Baca Selengkapnya
+                            </button>
+                            ${isOwnerMode ? `<button onclick="openEditArticleModal('${art.id}')" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1"><i class="fa-solid fa-pen"></i> Edit</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function renderManageTable() {
+            const tbody = document.getElementById('manageArticleTableBody');
+            if (articles.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-zinc-500 text-xs">Belum ada artikel terpublikasi.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            articles.forEach(art => {
+                const img = art.images?.[0] || 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=200';
+                html += `
+                    <tr class="hover:bg-zinc-900/40 transition-colors">
+                        <td class="py-3 px-4 flex items-center gap-3">
+                            <img src="${img}" class="w-10 h-10 rounded-lg object-cover border border-yellow-500/20 shrink-0">
+                            <span class="font-medium text-xs text-white line-clamp-1 cursor-pointer hover:text-yellow-400" onclick="openDetailArticle('${art.id}')">${art.title}</span>
+                        </td>
+                        <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-md bg-yellow-400/10 text-yellow-400 text-[11px] font-semibold border border-yellow-500/20">${art.category}</span></td>
+                        <td class="py-3 px-4 text-xs text-zinc-400">${art.date}</td>
+                        <td class="py-3 px-4 text-right space-x-1.5">
+                            <button onclick="openDetailArticle('${art.id}')" class="px-2.5 py-1.5 rounded-lg bg-zinc-800 text-yellow-400 text-xs font-semibold hover:bg-zinc-700" title="Lihat"><i class="fa-solid fa-eye"></i></button>
+                            <button onclick="openEditArticleModal('${art.id}')" class="px-2.5 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 text-xs font-semibold hover:bg-zinc-700" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteArticle('${art.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Open Full Detail Modal
+        function openDetailArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            document.getElementById('detailCategory').innerText = art.category;
+            document.getElementById('detailDateText').innerText = art.date;
+            document.getElementById('detailTitle').innerText = art.title;
+            document.getElementById('detailContent').innerText = art.content;
+
+            const mainImg = art.images?.[0] || 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800';
+            document.getElementById('detailMainImg').src = mainImg;
+
+            const galleryContainer = document.getElementById('detailGalleryContainer');
+            if (art.images && art.images.length > 0) {
+                let galHtml = '';
+                art.images.forEach((img, idx) => {
+                    galHtml += `<img src="${img}" onclick="setDetailMainImage('${img}')" class="w-16 h-16 rounded-xl object-cover cursor-pointer border-2 ${idx === 0 ? 'border-yellow-400' : 'border-yellow-500/20'} hover:border-yellow-400 shrink-0 transition-all">`;
+                });
+                galleryContainer.innerHTML = galHtml;
+                galleryContainer.classList.remove('hidden');
+            } else {
+                galleryContainer.classList.add('hidden');
+            }
+
+            document.getElementById('detailArticleModal').classList.remove('hidden');
+        }
+
+        function setDetailMainImage(imgSrc) {
+            document.getElementById('detailMainImg').src = imgSrc;
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailArticleModal').classList.add('hidden');
+        }
+
+        // Article Create / Edit Modals
+        function openArticleModal() {
+            document.getElementById('articleId').value = '';
+            document.getElementById('articleTitle').value = '';
+            document.getElementById('articleContent').value = '';
+            document.getElementById('articleImagesInput').value = '';
+            document.getElementById('articleUrlInput').value = '';
+            tempArticleImages = [];
+            renderImagePreviews();
+            document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-yellow-400"></i> Buat Artikel Baru';
+            document.getElementById('articleModal').classList.remove('hidden');
+        }
+
+        function openEditArticleModal(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+            document.getElementById('articleId').value = art.id;
+            document.getElementById('articleTitle').value = art.title;
+            document.getElementById('articleCategory').value = art.category;
+            document.getElementById('articleContent').value = art.content;
+            document.getElementById('articleUrlInput').value = '';
+            tempArticleImages = [...(art.images || [])];
+            renderImagePreviews();
+            document.getElementById('modalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-yellow-400"></i> Edit Artikel';
+            document.getElementById('articleModal').classList.remove('hidden');
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+        }
+
+        async function handleArticleImages(event) {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                showToast('Mengompres foto...');
+                for (let file of files) {
+                    const compressed = await compressImage(file, 900, 0.7);
+                    tempArticleImages.push(compressed);
+                }
+                renderImagePreviews();
+            }
+        }
+
+        function addUrlImage() {
+            const urlInput = document.getElementById('articleUrlInput');
+            const urlVal = urlInput.value.trim();
+            if (urlVal) {
+                tempArticleImages.push(urlVal);
+                urlInput.value = '';
+                renderImagePreviews();
+            } else {
+                showToast('Masukkan URL gambar terlebih dahulu.', 'error');
+            }
+        }
+
+        function renderImagePreviews() {
+            const container = document.getElementById('imagePreviewContainer');
+            document.getElementById('tempImageCount').innerText = tempArticleImages.length;
+
+            if (tempArticleImages.length === 0) {
+                container.innerHTML = `<span class="text-xs text-zinc-500 flex items-center justify-center w-full py-2">Belum ada foto yang dipilih.</span>`;
+                return;
+            }
+
+            let html = '';
+            tempArticleImages.forEach((img, idx) => {
+                html += `
+                    <div class="relative group shrink-0">
+                        <img src="${img}" class="w-14 h-14 rounded-xl object-cover border border-yellow-400 shadow-md">
+                        <button type="button" onclick="removeTempImage(${idx})" class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center shadow-md"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeTempImage(idx) {
+            tempArticleImages.splice(idx, 1);
+            renderImagePreviews();
+        }
+
+        async function handleSaveArticle(event) {
+            event.preventDefault();
+            const id = document.getElementById('articleId').value;
+            const title = document.getElementById('articleTitle').value;
+            const category = document.getElementById('articleCategory').value;
+            const content = document.getElementById('articleContent').value;
+            
+            if (tempArticleImages.length === 0) {
+                showToast('Pilih minimal 1 gambar untuk artikel!', 'error');
+                return;
+            }
+
+            const currentDate = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            if (id) {
+                const idx = articles.findIndex(a => a.id === id);
+                if (idx !== -1) {
+                    articles[idx] = { ...articles[idx], title, category, content, images: [...tempArticleImages] };
+                }
+            } else {
+                const newArt = {
+                    id: 'art-' + Date.now(),
+                    title,
+                    category,
+                    date: currentDate,
+                    images: [...tempArticleImages],
+                    content
+                };
+                articles.unshift(newArt);
+            }
+
+            await setDBItem('articles', articles);
+            closeArticleModal();
+            renderCategories();
+            renderArticles();
+            renderManageTable();
+            showToast('Artikel berhasil disimpan!');
+        }
+
+        async function deleteArticle(id) {
+            articles = articles.filter(a => a.id !== id);
+            await setDBItem('articles', articles);
+            renderCategories();
+            renderArticles();
+            renderManageTable();
+            showToast('Artikel berhasil dihapus.');
+        }
+
+        /* -------------------------------------------------------------
+           8. CLIENT INQUIRY & LIGHTBOX MODAL HANDLERS
+        ------------------------------------------------------------- */
+        function openInquiryModal() {
+            document.getElementById('inquiryModal').classList.remove('hidden');
+        }
+
+        function closeInquiryModal() {
+            document.getElementById('inquiryModal').classList.add('hidden');
+        }
+
+        function setInquiryTarget(target) {
+            inquiryTarget = target;
+        }
+
+        function handleSendInquiry(event) {
+            event.preventDefault();
+            const name = document.getElementById('inquiryName').value;
+            const service = document.getElementById('inquiryService').value;
+            const msg = document.getElementById('inquiryMessage').value;
+
+            const text = `Halo ${profile.name}, saya ${name}.\nSaya ingin mengajukan inquiry/booking untuk: *${service}*.\n\nDetail Project:\n"${msg}"`;
+
+            if (inquiryTarget === 'wa') {
+                const phone = profile.phone || '628123456789';
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+            } else {
+                window.open(`mailto:${profile.email}?subject=Inquiry Project - ${service}&body=${encodeURIComponent(text)}`, '_blank');
+            }
+            closeInquiryModal();
+            showToast('Inquiry berhasil dikirim!');
+        }
+
+        function openLightbox(imgSrc) {
+            document.getElementById('lightboxImg').src = imgSrc;
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
